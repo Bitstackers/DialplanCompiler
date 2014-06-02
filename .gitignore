@@ -1,6 +1,7 @@
 # Don’t commit the following directories created by pub.
 build/
 packages/
+packages
 
 # Or the files created by dart2js.
 *.dart.js
@@ -11,3 +12,14 @@ packages/
 
 # Include when developing application packages.
 pubspec.lock
+
+# Do not track emacs temporary and backup files
+\#*#
+*~
+
+# Do not track Nano temporary files
+.#*#
+
+# Don't track .settings and .buildlog from eclipse
+.settings
+.buildlog

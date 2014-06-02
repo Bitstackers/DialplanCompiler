@@ -1,0 +1,10 @@
+{
+    "dbhost": "example.com",
+    "dbname": "mydb",
+    "dbpassword": "mypassword",
+    "dbport": 5432,
+    "dbuser": "myuser",
+    "httpport": 4210,
+    "localContextPath": "/usr/local/freeswitch/conf/dialplan/receptions",
+    "publiccontextpath": "/usr/local/freeswitch/conf/dialplan/public"
+}
