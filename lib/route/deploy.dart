@@ -9,8 +9,9 @@ class DialplanController {
   void deploy(HttpRequest request) {
     int receptionId = pathIntParameter(request.uri, 'reception');
     db.getDialplan(receptionId).then((Dialplan dialplan) {
-      GeneratorOutput output = generateXml(dialplan);
       try {
+        GeneratorOutput output = generateXml(dialplan);
+
         String publicFilePath = config.publicContextPath + 'reception_${receptionId}.xml';
         File publicFile = new File(publicFilePath);
 

@@ -25,6 +25,14 @@ List<XmlElement> actionToXml(Action action) {
 List<XmlElement> receptionist(Receptionists action) {
   List<XmlElement> nodes = new List<XmlElement>();
 
+  if(action.sleepTime != null) {
+    nodes.add(XmlAction('set', 'sleeptime=${action.sleepTime}'));
+  }
+
+  if(action.music != null && action.music.isNotEmpty) {
+    nodes.add(XmlAction('set', 'fifo_music=${action.music}'));
+  }
+
   nodes.add(XmlAction('transfer', 'prequeue XML default'));
 
   return nodes;
