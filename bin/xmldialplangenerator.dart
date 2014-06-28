@@ -17,6 +17,10 @@ void main(List<String> args) {
   ArgResults parsedArgs = registerAndParseCommandlineArguments(parser, args);
 
   if(parsedArgs['help']) {
+    //TODO TESTING - REMOVE
+    TestStart();
+    //TODO TESTING - REMOVE
+
     print(parser.getUsage());
     return;
   }
@@ -49,8 +53,27 @@ ArgResults registerAndParseCommandlineArguments(ArgParser parser, List<String> a
   return parser.parse(arguments);
 }
 
+void TestOutPut() {
+  Dialplan dialplan = new Dialplan();
+  dialplan.startExtensionGroup = 'startingGroup';
+  dialplan.extensionGroups['startingGroup'] =
+      [ new Extension(name: 'mandag-torsdag')
+          ..conditions = [new Time()..comment = 'mandag-torsdag'..wday='2-5']
+          ..actions = [new Receptionists()..music = "I don't like mondays"],
+
+        new Extension(name: 'fredag')
+          ..conditions = [new Time()..comment = 'fredag'..wday='6']
+          ..actions = [new Receptionists()..music = "Rebecca Black - Friday"]];
+
+  dialplan.extensionGroups['lukket'] =
+      [ new Extension(name: 'lukket')
+          ..actions = [new Voicemail()..email = 'me@example.com']];
+
+  print(JSON.encode(dialplan));
+}
+
 void TestStart() {
-  int receptionId = 9;
+  int receptionId = 1;
   String number = '1234000${receptionId}';
 
   Map dialplan = JSON.decode(dialplan2);
@@ -66,84 +89,60 @@ void TestStart() {
 }
 
 /**
- * ---- Krav til modellen.
- * Der skal altid være en, og kun en, extension med start = true
- * Der må højst være en extension med catchall = true
- */
-
-/**
- * TODO TESTING. DELETE IF YOU SEE ME IN DOC!.
+ * TODO TESTING. DELETE IF YOU SEE ME IN PRODUCTION!.
  */
 
 String dialplan2 ='''
 {
-    "extensions": [
-        {
-            "start": true,
-            "catchall": false,
-            "name": "man-tors",
-            "failoverextension": "fredag",
-            "conditions": [
-                {
-                    "condition": "time",
-                    "time-of-day": "08:00-17:00",
-                    "wday": "mon-thu"
-                }
-            ],
-            "actions": [
-                {
-                    "action": "receptionists",
-                    "sleeptime": 0,
-                    "music": "mohrec7",
-                    "welcomefile": "r_8_welcome.wav"
-                }
-            ]
-        },
-        {
-            "start": false,
-            "catchall": false,
-            "name": "fredag",
-            "failoverextension": "lukket",
-            "conditions": [
-                {
-                    "condition": "time",
-                    "time-of-day": "08:00-16:30",
-                    "wday": "fri"
-                }
-            ],
-            "actions": [
-                {
-                    "action": "receptionists",
-                    "sleeptime": 0,
-                    "music": "mohrec7",
-                    "welcomefile": "r_8_welcome.wav"
-                }
-            ]
-        },
-        {
-            "start": false,
-            "catchall": false,
-            "name": "lukket",
-            "conditions": [],
-            "actions": [
-                {
-                    "action": "playaudio",
-                    "filename": "en/us/callie/misc/8000/misc-soccer_mom.wav"
-                }
-            ]
-        },
-        {
-            "start": false,
-            "name": "natsvar",
-            "catchall": true,
-            "conditions": [],
-            "actions": [
-                {
-                    "action": "playaudio",
-                    "filename": "en/us/callie/misc/8000/error.wav"
-                }
-            ]
-        }
-    ]
+    "version": 1,
+    "extensionGroups": {
+        "startingGroup": [
+            {
+                "name": "mandag-torsdag",
+                "conditionlist": [
+                    {
+                        "condition": "time",
+                        "comment": "mandag-torsdag",
+                        "wday": "2-5"
+                    }
+                ],
+                "actionlist": [
+                    {
+                        "action": "receptionists",
+                        "music": "I don't like mondays"
+                    }
+                ]
+            },
+            {
+                "name": "fredag",
+                "conditionlist": [
+                    {
+                        "condition": "time",
+                        "comment": "fredag",
+                        "wday": "6"
+                    }
+                ],
+                "actionlist": [
+                    {
+                        "action": "receptionists",
+                        "music": "Rebecca Black - Friday"
+                    }
+                ]
+            }
+        ],
+        "lukket": [
+            {
+                "name": "lukket",
+                "conditionlist": [],
+                "actionlist": [
+                    {
+                        "action": "voicemail",
+                        "email": "me@example.com"
+                    }
+                ]
+            }
+        ]
+    },
+    "startExtensionGroup": "startingGroup"
 }
 ''';

@@ -19,50 +19,59 @@ GeneratorOutput generateXml(Dialplan dialplan) {
   GeneratorOutput output = new GeneratorOutput();
 
   //The extension the caller hits.
-  output.entry = makeEntryNode(dialplan,[]);
+  output.entry = _makeEntryNode(dialplan,[]);
 
+  output.receptionContext = _makeReceptionContext(dialplan);
 
-  XmlElement context = new XmlElement('context')
-    ..attributes['name'] = contextName(dialplan.receptionId);
+  return output;
+}
 
+XmlElement _makeReceptionContext(Dialplan dialplan) {
   //Every included file, must have the root element <include>
   XmlElement include = new XmlElement('include');
-  output.receptionContext = include
-    ..children.add(context);
 
-  //Make actual Extension.
-  //The Catch all extension should be last i the chain.
-  Iterable<XmlElement> extensions = dialplan.Extensions.where((Extension ext) => !ext.isCatchAll).map((Extension ext) => makeReceptionExtensions(ext, dialplan.receptionId));
+  XmlElement context = new XmlElement('context')
+     ..attributes['name'] = contextName(dialplan.receptionId);
+  include.children.add(context);
+
+  List<XmlElement> extensions = new List<XmlElement>();
+  for(String groupName in dialplan.extensionGroups.keys) {
+    List<Extension> extensionList = dialplan.extensionGroups[groupName];
+    extensions.addAll(extensionList.map((Extension ext) => _makeReceptionExtensions(ext, groupName, dialplan.receptionId)));
+
+    if(extensionList.any((ext) => ext.conditions.isEmpty)) {
+      //TODO make a "I as a creater of this dialplan may just have fucked up, and please catch the call so Freeswitch don't hangup on it" extension
+    }
+  }
   context.children.addAll(extensions);
 
-  //There should only be one extension as CatchAll, but this is the simplest one.
-  Iterable<XmlElement> catchAllExtension = dialplan.Extensions.where((Extension ext) => ext.isCatchAll).map((Extension ext) => makeReceptionExtensions(ext, dialplan.receptionId));
-  context.children.addAll(catchAllExtension);
-  return output;
+  return include;
 }
 
 /**
  * Makes the reception extensions.
  */
-XmlElement makeReceptionExtensions(Extension extension, int receptionId) {
+XmlElement _makeReceptionExtensions(Extension extension, String groupName, int receptionId) {
   XmlElement head = new XmlElement('extension')
     ..attributes['name'] = receptionExtensionName(receptionId, extension.name);
 
-  if(!extension.isCatchAll) {
-    //Makes the conditions.
-    XmlElement destCond = XmlCondition('destination_number', receptionExtensionName(receptionId, extension.name));
-    head.children.add(destCond);
+  //Check if the destination_number is right
+  XmlElement destCond = XmlCondition('destination_number', receptionExtensionName(receptionId, groupName));
+  head.children.add(destCond);
 
-    head.children.addAll(extension.conditions.map((condition) => conditionToXml(condition, extension.failoverExtension, receptionId)));
-  } else {
-    head.children.add(new XmlElement('condition'));
+  //Makes the conditions
+  XmlElement lastCondition = destCond;
+  for(Condition condition in extension.conditions) {
+    XmlElement xmlNode = conditionToXml(condition);
+    //The conditions must be nested.
+    lastCondition.children.add(xmlNode);
+    lastCondition = xmlNode;
   }
-  XmlElement lastCondition = head.children.last;
 
   //Makes all the actions
-  Iterable<List<XmlElement>> actions = extension.actions.map(actionToXml);
-  if(actions.isNotEmpty) {
-    lastCondition.children.addAll(actions.reduce(union));
+  Iterable<List<XmlElement>> xmlActions = extension.actions.map(actionToXml);
+  if(xmlActions.isNotEmpty) {
+    lastCondition.children.addAll(xmlActions.reduce(union));
   }
 
   return head;
@@ -71,11 +80,12 @@ XmlElement makeReceptionExtensions(Extension extension, int receptionId) {
 /**
  * Makes the extension that catches one the phonenumber.
  */
-XmlElement makeEntryNode(Dialplan dialplan, Iterable<String> conditionExtensions) {
+XmlElement _makeEntryNode(Dialplan dialplan, Iterable<String> conditionExtensions) {
   XmlElement entry = new XmlElement('extension')
     ..attributes['name'] = entryExtensionName(dialplan.receptionId);
 
-  XmlElement numberCondition = XmlCondition('destination_number', '^${dialplan.entryNumber}\$');
+  String entryNumber = dialplan.entryNumber.replaceAll(' ', '');
+  XmlElement numberCondition = XmlCondition('destination_number', '^${entryNumber}\$');
   entry.children.add(numberCondition);
 
   XmlElement setId = XmlAction('set', 'receptionid=${dialplan.receptionId}');
@@ -84,15 +94,16 @@ XmlElement makeEntryNode(Dialplan dialplan, Iterable<String> conditionExtensions
   //Executes all the extensions that sets condition variables.
   numberCondition.children.addAll(conditionExtensions.map((String extentionName) => XmlAction('execute_extension', extentionName)));
 
-  Extension startExtension = dialplan.Extensions.firstWhere((Extension e) => e.isStart);
-  XmlElement main = FsTransfer(receptionExtensionName(dialplan.receptionId, startExtension.name), contextName(dialplan.receptionId)); //XmlAction('transfer', receptionExtensionName(dialplan.receptionId, startExtension.name));
+  String context = contextName(dialplan.receptionId);
+  String extension = receptionExtensionName(dialplan.receptionId, dialplan.startExtensionGroup);
+  XmlElement main = _FsXmlTransfer(extension, context);
   numberCondition.children.add(main);
 
   return entry;
 }
 
 //TODO REMOVE - LIBRARY THIS.
-XmlElement FsTransfer(String extension, String context, {bool anti_action: false}) {
+XmlElement _FsXmlTransfer(String extension, String context, {bool anti_action: false}) {
   return XmlAction('transfer', '${extension} xml ${context}', anti_action);
 }
 
