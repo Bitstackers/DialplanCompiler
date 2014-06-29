@@ -18,6 +18,8 @@ void main(List<String> args) {
 
   if(parsedArgs['help']) {
     //TODO TESTING - REMOVE
+    //Dialplan plan = testDialplan();
+    //print(JSON.encode(plan));
     TestStart();
     //TODO TESTING - REMOVE
 
@@ -53,23 +55,28 @@ ArgResults registerAndParseCommandlineArguments(ArgParser parser, List<String> a
   return parser.parse(arguments);
 }
 
-void TestOutPut() {
+Dialplan testDialplan() {
   Dialplan dialplan = new Dialplan();
   dialplan.startExtensionGroup = 'startingGroup';
-  dialplan.extensionGroups['startingGroup'] =
-      [ new Extension(name: 'mandag-torsdag')
-          ..conditions = [new Time()..comment = 'mandag-torsdag'..wday='2-5']
-          ..actions = [new Receptionists()..music = "I don't like mondays"],
 
-        new Extension(name: 'fredag')
-          ..conditions = [new Time()..comment = 'fredag'..wday='6']
-          ..actions = [new Receptionists()..music = "Rebecca Black - Friday"]];
+  List<Extension> startingExtensions =
+    [ new Extension(name: 'mandag-torsdag')
+        ..conditions = [new Time()..comment = 'mandag-torsdag'..wday='2-5']
+        ..actions = [new Receptionists()..music = "I don't like mondays"],
 
-  dialplan.extensionGroups['lukket'] =
-      [ new Extension(name: 'lukket')
-          ..actions = [new Voicemail()..email = 'me@example.com']];
+      new Extension(name: 'fredag')
+        ..conditions = [new Time()..comment = 'fredag'..wday='6']
+        ..actions = [new Receptionists()..music = "Rebecca Black - Friday"]];
 
-  print(JSON.encode(dialplan));
+  List<Extension> lukketExtensions =
+    [ new Extension(name: 'lukket')
+      ..actions = [new Voicemail()..email = 'me@example.com']];
+
+  dialplan.extensionGroups =
+      [new ExtensionGroup(name: 'startingGroup')..extensions = startingExtensions,
+       new ExtensionGroup(name: 'lukket')..extensions = lukketExtensions];
+
+  return dialplan;
 }
 
 void TestStart() {
@@ -83,9 +90,9 @@ void TestStart() {
 
   GeneratorOutput output = generateXml(handplan);
   //print(JSON.encode(handplan.toJson()));
-  print(output.entry.toString().substring(1));
+  print(output.entry.toString().substring(1).replaceAll('\r', '\n'));
   print('-- ^ PUBLIC CONTEXT ^ ---- v RECEPTION CONTEXT v --');
-  print(output.receptionContext);
+  print(output.receptionContext.toString().replaceAll('\r', '\n'));
 }
 
 /**
@@ -95,54 +102,60 @@ void TestStart() {
 String dialplan2 ='''
 {
     "version": 1,
-    "extensionGroups": {
-        "startingGroup": [
-            {
-                "name": "mandag-torsdag",
-                "conditionlist": [
-                    {
-                        "condition": "time",
-                        "comment": "mandag-torsdag",
-                        "wday": "2-5"
-                    }
-                ],
-                "actionlist": [
-                    {
-                        "action": "receptionists",
-                        "music": "I don't like mondays"
-                    }
-                ]
-            },
-            {
-                "name": "fredag",
-                "conditionlist": [
-                    {
-                        "condition": "time",
-                        "comment": "fredag",
-                        "wday": "6"
-                    }
-                ],
-                "actionlist": [
-                    {
-                        "action": "receptionists",
-                        "music": "Rebecca Black - Friday"
-                    }
-                ]
-            }
-        ],
-        "lukket": [
-            {
-                "name": "lukket",
-                "conditionlist": [],
-                "actionlist": [
-                    {
-                        "action": "voicemail",
-                        "email": "me@example.com"
-                    }
-                ]
-            }
-        ]
-    },
+    "extensionGroups": [
+        {
+            "name": "startingGroup",
+            "extensionlist": [
+                {
+                    "name": "mandag-torsdag",
+                    "conditionlist": [
+                        {
+                            "condition": "time",
+                            "comment": "mandag-torsdag",
+                            "wday": "2-5"
+                        }
+                    ],
+                    "actionlist": [
+                        {
+                            "action": "receptionists",
+                            "music": "I don't like mondays"
+                        }
+                    ]
+                },
+                {
+                    "name": "fredag",
+                    "conditionlist": [
+                        {
+                            "condition": "time",
+                            "comment": "fredag",
+                            "wday": "6"
+                        }
+                    ],
+                    "actionlist": [
+                        {
+                            "action": "receptionists",
+                            "music": "Rebecca Black - Friday"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "lukket",
+            "extensionlist": [
+                {
+                    "name": "lukket",
+                    "conditionlist": [],
+                    "actionlist": [
+                        {
+                            "action": "voicemail",
+                            "email": "me@example.com"
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
     "startExtensionGroup": "startingGroup"
 }
 ''';

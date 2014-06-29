@@ -35,9 +35,9 @@ XmlElement _makeReceptionContext(Dialplan dialplan) {
   include.children.add(context);
 
   List<XmlElement> extensions = new List<XmlElement>();
-  for(String groupName in dialplan.extensionGroups.keys) {
-    List<Extension> extensionList = dialplan.extensionGroups[groupName];
-    extensions.addAll(extensionList.map((Extension ext) => _makeReceptionExtensions(ext, groupName, dialplan.receptionId)));
+  for(ExtensionGroup group in dialplan.extensionGroups) {
+    List<Extension> extensionList = group.extensions;
+    extensions.addAll(extensionList.map((Extension ext) => _makeReceptionExtensions(ext, group.name, dialplan.receptionId)));
 
     if(extensionList.any((ext) => ext.conditions.isEmpty)) {
       //TODO make a "I as a creater of this dialplan may just have fucked up, and please catch the call so Freeswitch don't hangup on it" extension
