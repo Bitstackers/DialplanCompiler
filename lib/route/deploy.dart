@@ -9,17 +9,21 @@ class DialplanController {
   void deploy(HttpRequest request) {
     int receptionId = pathIntParameter(request.uri, 'reception');
     db.getDialplan(receptionId).then((Dialplan dialplan) {
+      if(dialplan == null) {
+        return page404(request);
+      }
+
       try {
         GeneratorOutput output = generateXml(dialplan);
 
-        String publicFilePath = config.publicContextPath + 'reception_${receptionId}.xml';
+        String publicFilePath = config.publicContextPath + '${receptionId}.xml';
         File publicFile = new File(publicFilePath);
 
         //FIXME The need for a replace here should be fixed in the package and not here.
         String publicContent = output.entry.toString().replaceAll('\r', '\n');
         publicFile.writeAsStringSync(publicContent, mode: FileMode.WRITE, flush:true);
 
-        String localFilePath = config.localContextPath + 'reception_${receptionId}.xml';
+        String localFilePath = config.localContextPath + '${receptionId}.xml';
         File localFile = new File(localFilePath);
 
         //FIXME The need for a replace here should be fixed in the package and not here.

@@ -7,6 +7,6 @@ dependencies:
   xml: 1.0.0
   libdialplan:
     git:
-      url: git@github.com:PedersenThomas/libdialplan.git
-      ref: namedgroup
+      url: git@github.com:AdaHeads/libdialplan.git
+      ref: master
 
