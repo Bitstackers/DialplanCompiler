@@ -6,6 +6,7 @@ import 'dart:convert';
 import 'package:postgresql/postgresql_pool.dart';
 import 'package:postgresql/postgresql.dart';
 import 'package:libdialplan/libdialplan.dart';
+import 'package:libdialplan/ivr.dart';
 
 import 'configuration.dart';
 
@@ -34,6 +35,9 @@ class Database {
 
   Future<Dialplan> getDialplan(int receptionId) =>
       _getDialplan(pool, receptionId);
+
+  Future<IvrList> getIvr(int receptionId) =>
+      _getIvr(pool, receptionId);
 }
 
 /* ***********************************************

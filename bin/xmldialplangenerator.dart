@@ -3,10 +3,12 @@ import 'dart:convert';
 
 import 'package:args/args.dart';
 import 'package:libdialplan/libdialplan.dart';
+import 'package:libdialplan/ivr.dart';
 
 import '../lib/configuration.dart';
 import '../lib/database.dart';
-import '../lib/generator.dart';
+import '../lib/dialplan_compiler.dart';
+import '../lib/ivr_compiler.dart';
 import '../lib/logger.dart';
 import '../lib/router.dart';
 import '../lib/utilities.dart';
@@ -20,7 +22,8 @@ void main(List<String> args) {
     //TODO TESTING - REMOVE
     //Dialplan plan = testDialplan();
     //print(JSON.encode(plan));
-    TestStart();
+    //TestStart();
+    TestIvr();
     //TODO TESTING - REMOVE
 
     print(parser.getUsage());
@@ -53,6 +56,14 @@ ArgResults registerAndParseCommandlineArguments(ArgParser parser, List<String> a
       ..addOption('dbname',          help: 'The database name');
 
   return parser.parse(arguments);
+}
+
+/// It's turtles ... oh Tests, all the way down.
+
+void TestIvr() {
+  int receptionId = 42;
+  IvrList list = new IvrList.fromJson(JSON.decode(ivrJson));
+  print(generateIvrXml(list, receptionId));
 }
 
 Dialplan testDialplan() {
@@ -88,7 +99,7 @@ void TestStart() {
     ..receptionId = receptionId
     ..entryNumber = number;
 
-  GeneratorOutput output = generateXml(handplan);
+  DialplanGeneratorOutput output = generateDialplanXml(handplan);
   //print(JSON.encode(handplan.toJson()));
   print(output.entry.toString().substring(1).replaceAll('\r', '\n'));
   print('-- ^ PUBLIC CONTEXT ^ ---- v RECEPTION CONTEXT v --');
@@ -158,4 +169,51 @@ String dialplan2 ='''
     ],
     "startExtensionGroup": "startingGroup"
 }
+''';
+
+String ivrJson = '''
+{
+   "ivrlist" : [
+      {
+         "maxFailures" : null,
+         "entries" : [
+            {
+               "extensionGroup" : "Hans",
+               "digits" : "1"
+            },
+            {
+               "extensionGroup" : null,
+               "digits" : "3"
+            }
+         ],
+         "greetingShort" : null,
+         "name" : "Helligdag",
+         "exitSound" : null,
+         "invalidSound" : null,
+         "confirmKey" : null,
+         "greetingLong" : null,
+         "ditgitLength" : null,
+         "maxTimeouts" : null,
+         "interDigitTimeout" : null,
+         "confirmAttempts" : null,
+         "timeout" : null
+      },
+      {
+         "maxFailures" : null,
+         "entries" : [],
+         "greetingShort" : null,
+         "name" : "Lokationsdeling",
+         "exitSound" : null,
+         "invalidSound" : null,
+         "confirmKey" : null,
+         "greetingLong" : null,
+         "ditgitLength" : null,
+         "maxTimeouts" : null,
+         "interDigitTimeout" : null,
+         "confirmAttempts" : null,
+         "timeout" : null
+      }
+   ]
+}
+
 ''';

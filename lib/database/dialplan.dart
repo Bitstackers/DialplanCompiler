@@ -20,3 +20,22 @@ Future<Dialplan> _getDialplan(Pool pool, int receptionId) {
     }
   });
 }
+
+Future<IvrList> _getIvr(Pool pool, int receptionId) {
+  String sql = '''
+    SELECT ivr
+    FROM receptions
+    WHERE id = @receptionid
+  ''';
+
+    Map parameters = {'receptionid': receptionId};
+
+    return query(pool, sql, parameters).then((rows) {
+      if(rows.length != 1) {
+        return null;
+      } else {
+        Row row = rows.first;
+        return new IvrList.fromJson(JSON.decode(row.dialplan));
+      }
+    });
+}

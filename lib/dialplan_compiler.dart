@@ -1,4 +1,4 @@
-library generator;
+library dialplancompiler;
 
 import 'package:libdialplan/libdialplan.dart';
 import 'package:xml/xml.dart';
@@ -7,7 +7,7 @@ import 'generator/action_to_xml.dart';
 import 'generator/condition_to_xml.dart';
 import 'utilities.dart';
 
-class GeneratorOutput {
+class DialplanGeneratorOutput {
   XmlElement entry;
   XmlElement receptionContext;
 }
@@ -15,8 +15,8 @@ class GeneratorOutput {
 /**
  * Generates multiple extensions for a receptions dialplan.
  */
-GeneratorOutput generateXml(Dialplan dialplan) {
-  GeneratorOutput output = new GeneratorOutput();
+DialplanGeneratorOutput generateDialplanXml(Dialplan dialplan) {
+  DialplanGeneratorOutput output = new DialplanGeneratorOutput();
 
   //The extension the caller hits.
   output.entry = _makeEntryNode(dialplan,[]);

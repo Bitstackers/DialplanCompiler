@@ -12,6 +12,7 @@ class Configuration {
   String configfile;
   String localContextPath;
   String publicContextPath;
+  String audioFolder;
   String dbuser;
   String dbpassword;
   String dbhost;
@@ -65,6 +66,10 @@ class Configuration {
     if(_hasArgument('publiccontextpath')) {
       publicContextPath = _args['publiccontextpath'];
     }
+
+    if(_hasArgument('audiofolder')) {
+      audioFolder = _args['audiofolder'];
+    }
   }
 
   void _parseFile() {
@@ -101,12 +106,16 @@ class Configuration {
       httpport = content['httpport'];
     }
 
-    if(content.containsKey('localContextPath')) {
-      localContextPath = content['localContextPath'];
+    if(content.containsKey('localcontextpath')) {
+      localContextPath = content['localcontextpath'];
     }
 
-    if(content.containsKey('publicContextPath')) {
-      publicContextPath = content['publicContextPath'];
+    if(content.containsKey('publiccontextpath')) {
+      publicContextPath = content['publiccontextpath'];
+    }
+
+    if(content.containsKey('audiofolder')) {
+      audioFolder = content['audiofolder'];
     }
   }
 
@@ -117,8 +126,8 @@ class Configuration {
     if(localContextPath == null) {
       throw new InvalidConfigurationException("localContextPath isn't specified");
     } else {
-      Directory file = new Directory(localContextPath);
-      if(!file.existsSync()) {
+      Directory directory = new Directory(localContextPath);
+      if(!directory.existsSync()) {
         throw new InvalidConfigurationException('localContextPath: "${localContextPath}" does not exists');
       }
     }
@@ -126,16 +135,29 @@ class Configuration {
     if(publicContextPath == null) {
       throw new InvalidConfigurationException("publicContextPath isn't specified");
     } else {
-      Directory file = new Directory(publicContextPath);
-      if(!file.existsSync()) {
+      Directory directory = new Directory(publicContextPath);
+      if(!directory.existsSync()) {
         throw new InvalidConfigurationException('publicContextPath: "${publicContextPath}" does not exists');
       }
+    }
+
+    if(audioFolder == null) {
+      throw new InvalidConfigurationException("audiofolder isn't specified");
+    } else {
+      Directory directory = new Directory(audioFolder);
+      if(!directory.existsSync()) {
+        throw new InvalidConfigurationException('audiofolder: "${audioFolder}" does not exists');
+      }
+    }
+    if(!audioFolder.endsWith('/')) {
+      audioFolder = '${audioFolder}/';
     }
   }
 
   String toString() => '''
       LocalContextPath: ${localContextPath}
       publicContextPath: ${publicContextPath}
+      audioFolder: ${audioFolder}
       HttpPort: $httpport
       Database:
         Host: $dbhost
