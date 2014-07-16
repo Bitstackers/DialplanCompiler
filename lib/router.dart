@@ -22,7 +22,7 @@ part 'route/dialplan_controller.dart';
 part 'route/freeswitch_controller.dart';
 part 'route/page404.dart';
 
-final Pattern receptionIdDialplanUrl = new UrlPattern(r'/reception/(\d+)');
+final Pattern receptionIdDialplanUrl = new UrlPattern(r'/reception/(\d+)/dialplan');
 final Pattern receptionAudiofilesUrl = new UrlPattern(r'/reception/(\d+)/audio');
 final Pattern receptionIdIvrUrl = new UrlPattern(r'/reception/(\d+)/ivr');
 final Pattern playlistIdUrl = new UrlPattern(r'/playlist/(\d+)');
