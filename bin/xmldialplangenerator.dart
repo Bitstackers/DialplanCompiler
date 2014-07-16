@@ -45,15 +45,20 @@ void main(List<String> args) {
 }
 
 ArgResults registerAndParseCommandlineArguments(ArgParser parser, List<String> arguments) {
-    parser
-      ..addFlag  ('help', abbr: 'h', help: 'Output this help')
-      ..addOption('configfile',      help: 'The JSON configuration file. Defaults to config.json')
-      ..addOption('httpport',        help: 'The port the HTTP server listens on.  Defaults to 8080')
-      ..addOption('dbuser',          help: 'The database user')
-      ..addOption('dbpassword',      help: 'The database password')
-      ..addOption('dbhost',          help: 'The database host. Defaults to localhost')
-      ..addOption('dbport',          help: 'The database port. Defaults to 5432')
-      ..addOption('dbname',          help: 'The database name');
+  parser
+    ..addFlag  ('help', abbr: 'h',   help: 'Output this help')
+    ..addOption('configfile',        help: 'The JSON configuration file. Defaults to config.json')
+    ..addOption('httpport',          help: 'The port the HTTP server listens on.  Defaults to 8080')
+    ..addOption('dbuser',            help: 'The database user')
+    ..addOption('dbpassword',        help: 'The database password')
+    ..addOption('dbhost',            help: 'The database host. Defaults to localhost')
+    ..addOption('dbport',            help: 'The database port. Defaults to 5432')
+    ..addOption('dbname',            help: 'The database name')
+    ..addOption('localcontextpath',  help: 'The path for the reception specific dialplans')
+    ..addOption('publiccontextpath', help: 'The path for the public dialplans')
+    ..addOption('audiofolder',       help: 'The path for the sounds, specific for receptions')
+    ..addOption('localstreampath',   help: 'The path for the configurationfiles to local streams')
+    ..addOption('ivrpath',           help: 'The path for the ivr menues');
 
   return parser.parse(arguments);
 }

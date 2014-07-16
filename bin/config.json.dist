@@ -7,5 +7,7 @@
     "httpport": 4210,
     "localcontextpath": "/usr/local/freeswitch/conf/dialplan/receptions",
     "publiccontextpath": "/usr/local/freeswitch/conf/dialplan/public",
-    "audiofolder": "/usr/local/freeswitch/sounds/receptions"
+    "audiofolder": "/usr/local/freeswitch/sounds/receptions",
+    "localstreampath": "/usr/local/freeswitch/conf/local_streams",
+    "ivrpath": "/usr/local/freeswitch/conf/ivr_menus"
 }
