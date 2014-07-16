@@ -88,6 +88,9 @@ void writeAndCloseJson(HttpRequest request, String body) {
   addCorsHeaders(request.response);
   request.response.headers.contentType = JSON_MIME_TYPE;
 
+  //TODO use OpenReceptionFramework
+  logger.debug('${request.response.statusCode} ${request.method} ${request.uri}');
+
   request.response
     ..write(body)
     ..write('\n')
