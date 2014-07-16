@@ -14,6 +14,7 @@ class Configuration {
   String publicContextPath;
   String audioFolder;
   String localStreamPath;
+  String ivrPath;
   String dbuser;
   String dbpassword;
   String dbhost;
@@ -75,6 +76,10 @@ class Configuration {
     if(_hasArgument('localstreampath')) {
       localStreamPath = _args['localstreampath'];
     }
+
+    if(_hasArgument('ivrpath')) {
+      ivrPath = _args['ivrpath'];
+    }
   }
 
   void _parseFile() {
@@ -126,6 +131,10 @@ class Configuration {
     if(content.containsKey('localstreampath')) {
       localStreamPath = content['localstreampath'];
     }
+
+    if(content.containsKey('ivrpath')) {
+      ivrPath = content['ivrpath'];
+    }
   }
 
   /**
@@ -165,6 +174,15 @@ class Configuration {
       Directory directory = new Directory(localStreamPath);
       if(!directory.existsSync()) {
         throw new InvalidConfigurationException('localstreampath: "${localStreamPath}" does not exists');
+      }
+    }
+
+    if(ivrPath == null) {
+      throw new InvalidConfigurationException("ivrpath isn't specified");
+    } else {
+      Directory directory = new Directory(ivrPath);
+      if(!directory.existsSync()) {
+        throw new InvalidConfigurationException('ivrpath: "${ivrPath}" does not exists');
       }
     }
   }

@@ -37,7 +37,8 @@ class FreeswitchController {
       String filePath = path.join(config.localStreamPath, '${playlist.id}.xml');
       File file = new File(filePath);
 
-      String content = '';
+      //The XmlPackage v1.0.0 is deprecated, and it uses carrage-return instead of newlines, for line breaks.
+      String content = generateLocalStream(playlist).toString().replaceAll('\r', '\n');
       return file.writeAsString(content, mode: FileMode.WRITE, flush: true)
           .then((_) => writeAndCloseJson(request, JSON.encode({})) );
     }).catchError((error, stack) {

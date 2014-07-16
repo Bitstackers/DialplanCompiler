@@ -16,7 +16,6 @@ class DialplanController {
       try {
         deployDialplan(dialplan, receptionId);
 
-
         writeAndCloseJson(request, '{}');
       } catch(error, stack) {
         InternalServerError(request, error: error, stack: stack);
@@ -44,8 +43,25 @@ class DialplanController {
     localFile.writeAsStringSync(localContent, mode: FileMode.WRITE, flush:true);
   }
 
-  void deployIvr(IvrList list) {
-    throw 'Not Implemented';
+  void deployIvr(HttpRequest request) {
+    int receptionId = pathIntParameter(request.uri, 'reception');
+
+    db.getIvr(receptionId).then((IvrList ivrlist) {
+      if(ivrlist == null) {
+        return page404(request);
+      }
+
+      String filePath = path.join(config.ivrPath, '${receptionId}.xml');
+      File file = new File(filePath);
+
+      //The XmlPackage v1.0.0 is deprecated, and it uses carrage-return instead of newlines, for line breaks.
+      String content = generateIvrXml(ivrlist, receptionId).toString().replaceAll('\r', '\n');
+      return file.writeAsString(content, mode: FileMode.WRITE, flush: true)
+          .then((_) => writeAndCloseJson(request, JSON.encode({})) );
+    }).catchError((error, stack) {
+      logger.error('deployPlaylist url: ${request.uri}, gave Error: "${error}" \n${stack}');
+      InternalServerError(request);
+    });
   }
 }
 
