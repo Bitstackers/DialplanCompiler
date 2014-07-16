@@ -13,6 +13,7 @@ class Configuration {
   String localContextPath;
   String publicContextPath;
   String audioFolder;
+  String localStreamPath;
   String dbuser;
   String dbpassword;
   String dbhost;
@@ -70,6 +71,10 @@ class Configuration {
     if(_hasArgument('audiofolder')) {
       audioFolder = _args['audiofolder'];
     }
+
+    if(_hasArgument('localstreampath')) {
+      localStreamPath = _args['localstreampath'];
+    }
   }
 
   void _parseFile() {
@@ -117,6 +122,10 @@ class Configuration {
     if(content.containsKey('audiofolder')) {
       audioFolder = content['audiofolder'];
     }
+
+    if(content.containsKey('localstreampath')) {
+      localStreamPath = content['localstreampath'];
+    }
   }
 
   /**
@@ -149,8 +158,14 @@ class Configuration {
         throw new InvalidConfigurationException('audiofolder: "${audioFolder}" does not exists');
       }
     }
-    if(!audioFolder.endsWith('/')) {
-      audioFolder = '${audioFolder}/';
+
+    if(localStreamPath == null) {
+      throw new InvalidConfigurationException("localstreampath isn't specified");
+    } else {
+      Directory directory = new Directory(localStreamPath);
+      if(!directory.existsSync()) {
+        throw new InvalidConfigurationException('localstreampath: "${localStreamPath}" does not exists');
+      }
     }
   }
 

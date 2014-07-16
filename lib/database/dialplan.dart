@@ -28,14 +28,34 @@ Future<IvrList> _getIvr(Pool pool, int receptionId) {
     WHERE id = @receptionid
   ''';
 
-    Map parameters = {'receptionid': receptionId};
+  Map parameters = {'receptionid': receptionId};
 
-    return query(pool, sql, parameters).then((rows) {
-      if(rows.length != 1) {
-        return null;
-      } else {
-        Row row = rows.first;
-        return new IvrList.fromJson(JSON.decode(row.dialplan));
-      }
-    });
+  return query(pool, sql, parameters).then((rows) {
+    if(rows.length != 1) {
+      return null;
+    } else {
+      Row row = rows.first;
+      return new IvrList.fromJson(JSON.decode(row.dialplan));
+    }
+  });
+}
+
+Future<Playlist> _getPlaylist(Pool pool, int playlistId) {
+  String sql = '''
+    SELECT id, content
+    FROM playlists
+    WHERE id = @playlistid
+  ''';
+
+  Map parameters = {'playlistid': playlistId};
+
+  return query(pool, sql, parameters).then((rows) {
+    if(rows.length != 1) {
+      return null;
+    } else {
+      Row row = rows.first;
+      return new Playlist.fromJson(JSON.decode(row.content))
+        ..id = row.id;
+    }
+  });
 }

@@ -2,8 +2,9 @@ part of XmlDialplanGenerator.router;
 
 class FreeswitchController {
   Configuration config;
+  Database db;
 
-  FreeswitchController(Configuration this.config);
+  FreeswitchController(Database this.db, Configuration this.config);
 
   List<String> audioFormats = ['wav'];
 
@@ -23,5 +24,25 @@ class FreeswitchController {
     } else {
       writeAndCloseJson(request, JSON.encode({}));
     }
+  }
+
+  void deployPlaylist(HttpRequest request) {
+    int playlistId = pathIntParameter(request.uri, 'playlist');
+
+    db.getPlaylist(playlistId).then((Playlist playlist) {
+      if(playlist == null) {
+        return page404(request);
+      }
+
+      String filePath = path.join(config.localStreamPath, '${playlist.id}.xml');
+      File file = new File(filePath);
+
+      String content = '';
+      return file.writeAsString(content, mode: FileMode.WRITE, flush: true)
+          .then((_) => writeAndCloseJson(request, JSON.encode({})) );
+    }).catchError((error, stack) {
+      logger.error('deployPlaylist url: ${request.uri}, gave Error: "${error}" \n${stack}');
+      InternalServerError(request);
+    });
   }
 }

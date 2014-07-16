@@ -9,6 +9,7 @@ import 'package:libdialplan/libdialplan.dart';
 import 'package:libdialplan/ivr.dart';
 
 import 'configuration.dart';
+import 'model/playlist.dart';
 
 part 'database/dialplan.dart';
 
@@ -38,6 +39,9 @@ class Database {
 
   Future<IvrList> getIvr(int receptionId) =>
       _getIvr(pool, receptionId);
+
+  Future<Playlist> getPlaylist(int playlistId) =>
+      _getPlaylist(pool, playlistId);
 }
 
 /* ***********************************************

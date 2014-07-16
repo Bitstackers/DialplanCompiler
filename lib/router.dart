@@ -13,6 +13,7 @@ import 'configuration.dart';
 import 'database.dart';
 import 'dialplan_compiler.dart';
 import 'logger.dart';
+import 'model/playlist.dart';
 import 'utilities.dart';
 
 part 'route/dialplan_controller.dart';
@@ -21,6 +22,7 @@ part 'route/page404.dart';
 
 final Pattern receptionIdDialplanUrl = new UrlPattern(r'/reception/(\d+)');
 final Pattern receptionAudiofilesUrl = new UrlPattern(r'/reception/(\d+)/audio');
+final Pattern playlistIdUrl = new UrlPattern(r'/playlist/(\d+)');
 
 DialplanController dialplanController;
 FreeswitchController freeswitchController;
@@ -30,10 +32,11 @@ void setupRoutes(HttpServer server, Configuration config, Logger logger) {
     //..filter(matchAny(allUniqueUrls), auth(config.authUrl))
     ..serve(receptionIdDialplanUrl, method: 'GET').listen(dialplanController.deploy)
     ..serve(receptionAudiofilesUrl, method: 'GET').listen(freeswitchController.listAudioFiles)
+    ..serve(playlistIdUrl, method: 'GET').listen(freeswitchController.deployPlaylist)
     ..defaultStream.listen(page404);
 }
 
 void setupControllers(Database db, Configuration config) {
   dialplanController = new DialplanController(db, config);
-  freeswitchController = new FreeswitchController(config);
+  freeswitchController = new FreeswitchController(db, config);
 }
