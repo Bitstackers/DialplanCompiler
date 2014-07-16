@@ -35,7 +35,7 @@ Future<IvrList> _getIvr(Pool pool, int receptionId) {
       return null;
     } else {
       Row row = rows.first;
-      return new IvrList.fromJson(JSON.decode(row.dialplan));
+      return new IvrList.fromJson(JSON.decode(row.ivr));
     }
   });
 }
