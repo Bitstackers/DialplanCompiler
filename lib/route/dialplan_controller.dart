@@ -1,8 +1,8 @@
 part of XmlDialplanGenerator.router;
 
 class DialplanController {
-  Database db;
   Configuration config;
+  Database db;
 
   DialplanController(Database this.db, Configuration this.config);
 
@@ -29,17 +29,17 @@ class DialplanController {
   void deployDialplan(Dialplan dialplan, int receptionId) {
     DialplanGeneratorOutput output = generateDialplanXml(dialplan);
 
-    String publicFilePath = config.publicContextPath + '${receptionId}.xml';
+    String publicFilePath = path.join(config.publicContextPath, '${receptionId}.xml');
     File publicFile = new File(publicFilePath);
 
-    //FIXME The need for a replace here should be fixed in the package and not here.
+    //The XmlPackage v1.0.0 is deprecated, and it uses carrage-return instead of newlines, for line breaks.
     String publicContent = output.entry.toString().replaceAll('\r', '\n');
     publicFile.writeAsStringSync(publicContent, mode: FileMode.WRITE, flush:true);
 
-    String localFilePath = config.localContextPath + '${receptionId}.xml';
+    String localFilePath = path.join(config.localContextPath, '${receptionId}.xml');
     File localFile = new File(localFilePath);
 
-    //FIXME The need for a replace here should be fixed in the package and not here.
+    //The XmlPackage v1.0.0 is deprecated, and it uses carrage-return instead of newlines, for line breaks.
     String localContent = output.receptionContext.toString().replaceAll('\r', '\n');
     localFile.writeAsStringSync(localContent, mode: FileMode.WRITE, flush:true);
   }

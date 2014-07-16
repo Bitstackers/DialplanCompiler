@@ -2,11 +2,11 @@ name: XmlDialplanGenerator
 description: A sample command-line application
 dependencies:
   args: any
+  libdialplan:
+    git:
+      ref: master
+      url: https://github.com/AdaHeads/libdialplan.git
+  path: any
   postgresql: any
   route: any
   xml: 1.0.0
-  libdialplan:
-    git:
-      url: https://github.com/AdaHeads/libdialplan.git
-      ref: master
-
