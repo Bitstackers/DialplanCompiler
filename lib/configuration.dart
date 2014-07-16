@@ -191,6 +191,8 @@ class Configuration {
       LocalContextPath: ${localContextPath}
       publicContextPath: ${publicContextPath}
       audioFolder: ${audioFolder}
+      localstreampath: ${localStreamPath}
+      ivrpath: ${ivrPath}
       HttpPort: $httpport
       Database:
         Host: $dbhost
