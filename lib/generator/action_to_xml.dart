@@ -14,12 +14,20 @@ List<XmlElement> actionToXml(Action action) {
   } else if (action is PlayAudio) {
     return playAudio(action);
 
-  } else if (action is Forward) {
-    return forward(action);
+  } else if (action is Transfer) {
+    return transfer(action);
 
   } else {
     return [];
   }
+}
+
+List<XmlElement> playAudio(PlayAudio action) {
+  List<XmlElement> nodes = new List<XmlElement>();
+
+  nodes.add(XmlAction('playback', '${action.filename}'));
+
+  return nodes;
 }
 
 List<XmlElement> receptionist(Receptionists action) {
@@ -38,26 +46,22 @@ List<XmlElement> receptionist(Receptionists action) {
   return nodes;
 }
 
+List<XmlElement> transfer(Transfer action) {
+  List<XmlElement> nodes = new List<XmlElement>();
+
+  if(action.type == TransferType.PHONE) {
+    nodes.add(XmlAction('transfer', '${action.phoneNumber} XML default'));
+  } else if (action.type == TransferType.GROUP) {
+    nodes.add(XmlAction('transfer', '${action.extensionGroup} XML default'));
+  }
+
+  return nodes;
+}
+
 List<XmlElement> voicemail(Voicemail action) {
   List<XmlElement> nodes = new List<XmlElement>();
 
   nodes.add(XmlAction('transfer', 'voicemail XML default'));
-
-  return nodes;
-}
-
-List<XmlElement> playAudio(PlayAudio action) {
-  List<XmlElement> nodes = new List<XmlElement>();
-
-  nodes.add(XmlAction('playback', '\$\${sounds_dir}/${action.filename}'));
-
-  return nodes;
-}
-
-List<XmlElement> forward(Forward action) {
-  List<XmlElement> nodes = new List<XmlElement>();
-
-  nodes.add(XmlAction('bridge', action.number));
 
   return nodes;
 }
