@@ -3,8 +3,6 @@ library ConditionToXml;
 import 'package:libdialplan/libdialplan.dart' as dialplan;
 import 'package:xml/xml.dart';
 
-import '../dialplan_compiler.dart';
-
 XmlElement conditionToXml(dialplan.Condition condition) {
   if(condition is dialplan.Time) {
     return timeCondition(condition);

@@ -57,14 +57,16 @@ int pathIntParameter(Uri uri, String key) {
 }
 
 void InternalServerError(HttpRequest request, {error, stack, String message}) {
+  Map body = {'error': 'Internal Server Error'};
   if(error != null) {
     logger.error(error);
+    body['error'] = error.toString();
   }
   if(stack != null) {
     logger.error(stack);
+    //body['stack'] = stack.toString();
   }
 
-  Map body = {'error': 'Internal Server Error'};
   if(message != null) {
     body['message'] = message;
   }

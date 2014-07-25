@@ -12,18 +12,15 @@ class FreeswitchController {
     int receptionId = pathIntParameter(request.uri, 'reception');
 
     Directory dir = new Directory(path.join(config.audioFolder, '${receptionId}'));
+    List<String> listOfFiles = [];
     if(dir.existsSync()) {
       List<FileSystemEntity> files = dir.listSync();
-
-      Map result = {'files': files.
-                      where((FileSystemEntity file) => audioFormats.any((String format) => file.absolute.path.endsWith(format))).
-                      map((FileSystemEntity file) => file.absolute.path).toList()};
-
-      writeAndCloseJson(request, JSON.encode(result));
-
-    } else {
-      writeAndCloseJson(request, JSON.encode({}));
+      listOfFiles = files.
+          where((FileSystemEntity file) => audioFormats.any((String format) => file.absolute.path.endsWith(format))).
+          map((FileSystemEntity file) => file.absolute.path).toList();
     }
+
+    writeAndCloseJson(request, JSON.encode({'files': listOfFiles}));
   }
 
   void deployPlaylist(HttpRequest request) {
