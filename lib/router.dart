@@ -1,5 +1,6 @@
 library XmlDialplanGenerator.router;
 
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -8,6 +9,7 @@ import 'package:libdialplan/ivr.dart';
 import 'package:route/pattern.dart';
 import 'package:path/path.dart' as path;
 import 'package:route/server.dart';
+import 'package:OpenReceptionFramework/httpserver.dart';
 
 import 'configuration.dart';
 import 'database.dart';
@@ -30,9 +32,12 @@ final Pattern playlistIdUrl = new UrlPattern(r'/playlist/(\d+)');
 DialplanController dialplanController;
 FreeswitchController freeswitchController;
 
+List<Pattern> serviceAgentURL =
+  [receptionIdDialplanUrl, receptionAudiofilesUrl, receptionIdIvrUrl, playlistIdUrl];
+
 void setupRoutes(HttpServer server, Configuration config, Logger logger) {
   Router router = new Router(server)
-    //..filter(matchAny(allUniqueUrls), auth(config.authUrl))
+    ..filter(matchAny(serviceAgentURL), auth(config.authurl))
     ..serve(receptionIdDialplanUrl, method: 'GET').listen(dialplanController.deploy)
     ..serve(receptionAudiofilesUrl, method: 'GET').listen(freeswitchController.listAudioFiles)
     ..serve(receptionIdIvrUrl, method: 'GET').listen(dialplanController.deployIvr)

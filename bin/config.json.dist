@@ -1,4 +1,5 @@
 {
+    "authurl": "http://localhost:4050"
     "dbhost": "example.com",
     "dbname": "mydb",
     "dbpassword": "mypassword",

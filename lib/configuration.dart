@@ -9,6 +9,7 @@ import 'package:args/args.dart';
 class Configuration {
   ArgResults _args;
 
+  Uri authurl;
   String configfile;
   String localContextPath;
   String publicContextPath;
@@ -37,6 +38,10 @@ class Configuration {
   }
 
   void _parseCLA() {
+    if(_hasArgument('authurl')) {
+      authurl = Uri.parse(_args['authurl']);
+    }
+
     if(_hasArgument('dbhost')) {
       dbhost = _args['dbhost'];
     }
@@ -91,6 +96,10 @@ class Configuration {
     String rawContent = file.readAsStringSync();
 
     Map content = JSON.decode(rawContent);
+
+    if(content.containsKey('authurl')) {
+      authurl = Uri.parse(content['authurl']);
+    }
 
     if(content.containsKey('dbhost')) {
       dbhost = content['dbhost'];
