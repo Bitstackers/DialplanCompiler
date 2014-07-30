@@ -6,7 +6,6 @@ import 'package:libdialplan/libdialplan.dart';
 import 'package:libdialplan/ivr.dart';
 
 import '../lib/configuration.dart';
-import '../lib/database.dart';
 import '../lib/dialplan_compiler.dart';
 import '../lib/ivr_compiler.dart';
 import '../lib/logger.dart';
@@ -34,9 +33,9 @@ void main(List<String> args) {
   config.parse();
   print(config);
 
-  setupDatabase(config)
-    .then((db) => setupControllers(db, config))
-    .then((_) => makeServer(config.httpport))
+  setupControllers(config);
+
+  makeServer(config.httpport)
     .then((HttpServer server) {
       setupRoutes(server, config, logger);
 
@@ -49,11 +48,6 @@ ArgResults registerAndParseCommandlineArguments(ArgParser parser, List<String> a
     ..addFlag  ('help', abbr: 'h',   help: 'Output this help')
     ..addOption('configfile',        help: 'The JSON configuration file. Defaults to config.json')
     ..addOption('httpport',          help: 'The port the HTTP server listens on.  Defaults to 8080')
-    ..addOption('dbuser',            help: 'The database user')
-    ..addOption('dbpassword',        help: 'The database password')
-    ..addOption('dbhost',            help: 'The database host. Defaults to localhost')
-    ..addOption('dbport',            help: 'The database port. Defaults to 5432')
-    ..addOption('dbname',            help: 'The database name')
     ..addOption('localcontextpath',  help: 'The path for the reception specific dialplans')
     ..addOption('publiccontextpath', help: 'The path for the public dialplans')
     ..addOption('audiofolder',       help: 'The path for the sounds, specific for receptions')

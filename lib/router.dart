@@ -12,7 +12,6 @@ import 'package:route/server.dart';
 import 'package:OpenReceptionFramework/httpserver.dart';
 
 import 'configuration.dart';
-import 'database.dart';
 import 'dialplan_compiler.dart';
 import 'ivr_compiler.dart';
 import 'local_stream_compiler.dart';
@@ -22,7 +21,6 @@ import 'utilities.dart';
 
 part 'route/dialplan_controller.dart';
 part 'route/freeswitch_controller.dart';
-part 'route/page404.dart';
 
 final Pattern receptionIdDialplanUrl = new UrlPattern(r'/reception/(\d+)/dialplan');
 final Pattern receptionAudiofilesUrl = new UrlPattern(r'/reception/(\d+)/audio');
@@ -38,14 +36,14 @@ List<Pattern> serviceAgentURL =
 void setupRoutes(HttpServer server, Configuration config, Logger logger) {
   Router router = new Router(server)
     ..filter(matchAny(serviceAgentURL), auth(config.authurl))
-    ..serve(receptionIdDialplanUrl, method: 'GET').listen(dialplanController.deploy)
+    ..serve(receptionIdDialplanUrl, method: 'POST').listen(dialplanController.deployCompiler)
     ..serve(receptionAudiofilesUrl, method: 'GET').listen(freeswitchController.listAudioFiles)
-    ..serve(receptionIdIvrUrl, method: 'GET').listen(dialplanController.deployIvr)
-    ..serve(playlistIdUrl, method: 'GET').listen(freeswitchController.deployPlaylist)
+    ..serve(receptionIdIvrUrl, method: 'POST').listen(dialplanController.deployIvr)
+    ..serve(playlistIdUrl, method: 'POST').listen(freeswitchController.deployPlaylist)
     ..defaultStream.listen(page404);
 }
 
-void setupControllers(Database db, Configuration config) {
-  dialplanController = new DialplanController(db, config);
-  freeswitchController = new FreeswitchController(db, config);
+void setupControllers(Configuration config) {
+  dialplanController = new DialplanController(config);
+  freeswitchController = new FreeswitchController(config);
 }

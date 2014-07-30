@@ -6,6 +6,7 @@ import 'dart:io';
 
 import 'package:xml/xml.dart';
 
+import 'package:OpenReceptionFramework/httpserver.dart';
 import 'logger.dart';
 
 final ContentType JSON_MIME_TYPE = new ContentType('application', 'json', charset: 'UTF-8');
@@ -72,7 +73,7 @@ void InternalServerError(HttpRequest request, {error, stack, String message}) {
   }
   String response = JSON.encode(body);
   request.response.statusCode = HttpStatus.INTERNAL_SERVER_ERROR;
-  writeAndCloseJson(request, response);
+  writeAndClose(request, response);
 }
 
 /** Makes a third list containing the content of the two lists.*/
@@ -81,20 +82,4 @@ List union(List aList, List bList) {
   cList.addAll(aList);
   cList.addAll(bList);
   return cList;
-}
-
-/**
- * Writes out the body to the request, and closes the connection.
- */
-void writeAndCloseJson(HttpRequest request, String body) {
-  addCorsHeaders(request.response);
-  request.response.headers.contentType = JSON_MIME_TYPE;
-
-  //TODO use OpenReceptionFramework
-  logger.debug('${request.response.statusCode} ${request.method} ${request.uri}');
-
-  request.response
-    ..write(body)
-    ..write('\n')
-    ..close();
 }

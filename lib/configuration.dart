@@ -15,11 +15,6 @@ class Configuration {
   String audioFolder;
   String localStreamPath;
   String ivrPath;
-  String dbuser;
-  String dbpassword;
-  String dbhost;
-  int    dbport;
-  String dbname;
 
   int httpport;
 
@@ -39,26 +34,6 @@ class Configuration {
   void _parseCLA() {
     if(_hasArgument('authurl')) {
       authurl = Uri.parse(_args['authurl']);
-    }
-
-    if(_hasArgument('dbhost')) {
-      dbhost = _args['dbhost'];
-    }
-
-    if(_hasArgument('dbname')) {
-      dbname = _args['dbname'];
-    }
-
-    if(_hasArgument('dbpassword')) {
-      dbpassword = _args['dbpassword'];
-    }
-
-    if(_hasArgument('dbport')) {
-      dbport = int.parse(_args['dbport']);
-    }
-
-    if(_hasArgument('dbuser')) {
-      dbuser = _args['dbuser'];
     }
 
     if(_hasArgument('httpport')) {
@@ -98,26 +73,6 @@ class Configuration {
 
     if(content.containsKey('authurl')) {
       authurl = Uri.parse(content['authurl']);
-    }
-
-    if(content.containsKey('dbhost')) {
-      dbhost = content['dbhost'];
-    }
-
-    if(content.containsKey('dbname')) {
-      dbname = content['dbname'];
-    }
-
-    if(content.containsKey('dbpassword')) {
-      dbpassword = content['dbpassword'];
-    }
-
-    if(content.containsKey('dbport')) {
-      dbport = content['dbport'];
-    }
-
-    if(content.containsKey('dbuser')) {
-      dbuser = content['dbuser'];
     }
 
     if(content.containsKey('httpport')) {
@@ -201,13 +156,7 @@ class Configuration {
       audioFolder: ${audioFolder}
       localstreampath: ${localStreamPath}
       ivrpath: ${ivrPath}
-      HttpPort: $httpport
-      Database:
-        Host: $dbhost
-        Port: $dbport
-        User: $dbuser
-        Pass: ${dbpassword.codeUnits.map((_) => '*').join()}
-        Name: $dbname      
+      HttpPort: $httpport     
       ''';
 
   bool _hasArgument(String key) {
