@@ -7,6 +7,9 @@ XmlElement conditionToXml(dialplan.Condition condition) {
   if(condition is dialplan.Time) {
     return timeCondition(condition);
 
+  } else if(condition is dialplan.Date) {
+    return dateCondition(condition);
+
   } else {
     return null;
   }
@@ -22,6 +25,16 @@ XmlElement timeCondition(dialplan.Time condition) {
   if(condition.wday != null && condition.wday.isNotEmpty) {
     node.attributes['wday'] = dialplan.Time.transformWdayToFreeSwitchFormat(condition.wday);
   }
+
+  return node;
+}
+
+XmlElement dateCondition(dialplan.Date condition) {
+  XmlElement node = new XmlElement('condition');
+
+  node.attributes['year'] = condition.year;
+  node.attributes['mon'] = condition.mon;
+  node.attributes['mday'] = condition.mday;
 
   return node;
 }
