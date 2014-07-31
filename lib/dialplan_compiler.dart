@@ -88,7 +88,7 @@ XmlElement _makeEntryNode(Dialplan dialplan, Iterable<String> conditionExtension
   XmlElement numberCondition = XmlCondition('destination_number', '^${entryNumber}\$');
   entry.children.add(numberCondition);
 
-  XmlElement setId = XmlAction('set', 'receptionid=${dialplan.receptionId}');
+  XmlElement setId = XmlAction('set', 'reception_id=${dialplan.receptionId}');
   numberCondition.children.add(setId);
 
   //Executes all the extensions that sets condition variables.
