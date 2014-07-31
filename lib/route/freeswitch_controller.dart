@@ -65,4 +65,15 @@ class FreeswitchController {
       InternalServerError(request);
     });
   }
+
+  void deletePlaylist(HttpRequest request) {
+    int playlistId = pathIntParameter(request.uri, 'playlist');
+
+    String filePath = path.join(config.localStreamPath, '${playlistId}.xml');
+    File file = new File(filePath);
+
+    file.delete()
+        .then((_) => allOk(request))
+        .catchError((error) =>serverError(request, 'Deleting playlist ${playlistId} failed. Error: ${error}'));
+  }
 }

@@ -40,6 +40,7 @@ void setupRoutes(HttpServer server, Configuration config, Logger logger) {
     ..serve(receptionAudiofilesUrl, method: 'GET').listen(freeswitchController.listAudioFiles)
     ..serve(receptionIdIvrUrl, method: 'POST').listen(dialplanController.deployIvr)
     ..serve(playlistIdUrl, method: 'POST').listen(freeswitchController.deployPlaylist)
+    ..serve(playlistIdUrl, method: 'DELETE').listen(freeswitchController.deletePlaylist)
     ..defaultStream.listen(page404);
 }
 
