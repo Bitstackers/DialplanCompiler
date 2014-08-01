@@ -26,18 +26,20 @@ final Pattern receptionIdDialplanUrl = new UrlPattern(r'/reception/(\d+)/dialpla
 final Pattern receptionAudiofilesUrl = new UrlPattern(r'/reception/(\d+)/audio');
 final Pattern receptionIdIvrUrl = new UrlPattern(r'/reception/(\d+)/ivr');
 final Pattern playlistIdUrl = new UrlPattern(r'/playlist/(\d+)');
+final Pattern audiofileUrl = new UrlPattern(r'/audio');
 
 DialplanController dialplanController;
 FreeswitchController freeswitchController;
 
 List<Pattern> serviceAgentURL =
-  [receptionIdDialplanUrl, receptionAudiofilesUrl, receptionIdIvrUrl, playlistIdUrl];
+  [receptionIdDialplanUrl, receptionAudiofilesUrl, receptionIdIvrUrl, playlistIdUrl, audiofileUrl];
 
 void setupRoutes(HttpServer server, Configuration config, Logger logger) {
   Router router = new Router(server)
     ..filter(matchAny(serviceAgentURL), auth(config.authurl))
     ..serve(receptionIdDialplanUrl, method: 'POST').listen(dialplanController.deployCompiler)
     ..serve(receptionAudiofilesUrl, method: 'GET').listen(freeswitchController.listAudioFiles)
+    ..serve(audiofileUrl, method: 'DELETE').listen(freeswitchController.deleteAudioFile)
     ..serve(receptionIdIvrUrl, method: 'POST').listen(dialplanController.deployIvr)
     ..serve(playlistIdUrl, method: 'POST').listen(freeswitchController.deployPlaylist)
     ..serve(playlistIdUrl, method: 'DELETE').listen(freeswitchController.deletePlaylist)

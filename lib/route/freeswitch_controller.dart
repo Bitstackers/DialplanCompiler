@@ -76,4 +76,21 @@ class FreeswitchController {
         .then((_) => allOk(request))
         .catchError((error) =>serverError(request, 'Deleting playlist ${playlistId} failed. Error: ${error}'));
   }
+
+  void deleteAudioFile(HttpRequest request) {
+    String filePath = request.uri.queryParameters['filepath'];
+
+    if(filePath == null || filePath.trim().isEmpty) {
+      clientError(request, 'Missing parameter. filepath');
+      return;
+    }
+
+    File file = new File(filePath);
+    file.delete().then((_) {
+      allOk(request);
+    }).catchError((error) {
+      String logMessage = 'Tried deleting file: [${filePath}]. Error: ${error}';
+      serverError(request, logMessage);
+    });
+  }
 }
