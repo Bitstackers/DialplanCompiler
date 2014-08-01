@@ -5,8 +5,10 @@ class FreeswitchController {
 
   FreeswitchController(Configuration this.config);
 
+  /**File extensions that is accepted as sound files.*/
   List<String> audioFormats = ['wav'];
 
+  //TODO Rewrite to use async IO instead of sync.
   void listAudioFiles(HttpRequest request) {
     int receptionId = pathIntParameter(request.uri, 'reception');
 

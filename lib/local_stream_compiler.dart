@@ -7,6 +7,7 @@ import 'model/playlist.dart';
 const int _DEFAULT_RATE = 8000;
 
 XmlElement generateLocalStream(Playlist playlist) {
+  //Every include file must have a root element <include>
   XmlElement root = new XmlElement('include');
 
   root.children.add(_generateFromPlaylist(playlist));
@@ -21,7 +22,7 @@ XmlElement _generateFromPlaylist(Playlist playlist) {
     ..add(_paramNode('channels', playlist.channels.toString()))
     ..add(_paramNode('interval', playlist.interval.toString()));
 
-  //This is not supported, because there is some inconsistencies in how much of the file is getting played.
+  //Chime is not supported, because there is some inconsistencies in how much of the file is getting played.
 //  if(playlist.chimelist != null && playlist.chimelist.isNotEmpty) {
 //    parameters
 //      ..add(_paramNode('chime-list', playlist.chimelist.join(',')))
@@ -35,6 +36,11 @@ XmlElement _generateFromPlaylist(Playlist playlist) {
   return stream;
 }
 
+/**
+ * Make xml node for parameters
+ * Template
+ *   <param name="${name}" value="${value}"/>
+ */
 XmlElement _paramNode(String name, String value) {
   return new XmlElement('param')
     ..attributes['name'] = name

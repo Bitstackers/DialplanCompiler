@@ -3,7 +3,14 @@ library ConditionToXml;
 import 'package:libdialplan/libdialplan.dart' as dialplan;
 import 'package:xml/xml.dart';
 
+/**
+ * Transform a [Condition] object to XmlNode.
+ */
 XmlElement conditionToXml(dialplan.Condition condition) {
+  if(condition == null) {
+    throw new ArgumentError('condition is null');
+  }
+
   if(condition is dialplan.Time) {
     return timeCondition(condition);
 
@@ -11,7 +18,7 @@ XmlElement conditionToXml(dialplan.Condition condition) {
     return dateCondition(condition);
 
   } else {
-    return null;
+    throw 'Unknow condition. ${condition.runtimeType}';
   }
 }
 

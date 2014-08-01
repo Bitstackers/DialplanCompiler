@@ -4,25 +4,34 @@ import 'package:libdialplan/libdialplan.dart';
 import 'package:XmlDialplanGenerator/utilities.dart';
 import 'package:xml/xml.dart';
 
+/**
+ * Transform an [Action] object to XmlNode.
+ * There is returned a [List] because, an action require sometimes multiple
+ *  Freeswitch XmlNodes.
+ */
 List<XmlElement> actionToXml(Action action) {
+  if(action == null) {
+    throw new ArgumentError('action is null');
+  }
+
   if(action is Receptionists) {
-    return receptionist(action);
+    return _receptionist(action);
 
   } else if (action is Voicemail) {
-    return voicemail(action);
+    return _voicemail(action);
 
   } else if (action is PlayAudio) {
-    return playAudio(action);
+    return _playAudio(action);
 
   } else if (action is Transfer) {
-    return transfer(action);
+    return _transfer(action);
 
   } else {
-    return [];
+    throw 'Unknown Action. ${action.runtimeType}';
   }
 }
 
-List<XmlElement> playAudio(PlayAudio action) {
+List<XmlElement> _playAudio(PlayAudio action) {
   List<XmlElement> nodes = new List<XmlElement>();
 
   nodes.add(XmlAction('playback', '${action.filename}'));
@@ -30,7 +39,7 @@ List<XmlElement> playAudio(PlayAudio action) {
   return nodes;
 }
 
-List<XmlElement> receptionist(Receptionists action) {
+List<XmlElement> _receptionist(Receptionists action) {
   List<XmlElement> nodes = new List<XmlElement>();
 
   if(action.sleepTime != null) {
@@ -46,7 +55,7 @@ List<XmlElement> receptionist(Receptionists action) {
   return nodes;
 }
 
-List<XmlElement> transfer(Transfer action) {
+List<XmlElement> _transfer(Transfer action) {
   List<XmlElement> nodes = new List<XmlElement>();
 
   if(action.type == TransferType.PHONE) {
@@ -58,7 +67,7 @@ List<XmlElement> transfer(Transfer action) {
   return nodes;
 }
 
-List<XmlElement> voicemail(Voicemail action) {
+List<XmlElement> _voicemail(Voicemail action) {
   List<XmlElement> nodes = new List<XmlElement>();
 
   nodes.add(XmlAction('transfer', 'voicemail XML default'));

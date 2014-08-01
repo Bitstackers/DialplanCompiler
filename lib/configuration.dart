@@ -5,6 +5,10 @@ import 'dart:io';
 
 import 'package:args/args.dart';
 
+/**
+ * Class for loading configuration file, and configuration from the
+ * command-line arguments and check if every thing needed is configurated
+ **/
 class Configuration {
   ArgResults _args;
 

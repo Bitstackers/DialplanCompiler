@@ -7,6 +7,10 @@ import 'generator/action_to_xml.dart';
 import 'generator/condition_to_xml.dart';
 import 'utilities.dart';
 
+/**
+ * The call comes in in the public context, and gets transfered to it's own
+ *  reception specifict context. Therefore we need to generate "two" dialplans
+ */
 class DialplanGeneratorOutput {
   XmlElement entry;
   XmlElement receptionContext;
@@ -18,7 +22,7 @@ class DialplanGeneratorOutput {
 DialplanGeneratorOutput generateDialplanXml(Dialplan dialplan) {
   DialplanGeneratorOutput output = new DialplanGeneratorOutput();
 
-  //The extension the caller hits.
+  //The extension the caller first hits.
   output.entry = _makeEntryNode(dialplan,[]);
 
   output.receptionContext = _makeReceptionContext(dialplan);
@@ -52,20 +56,21 @@ XmlElement _makeReceptionContext(Dialplan dialplan) {
  * Makes the reception extensions.
  */
 XmlElement _makeReceptionExtensions(Extension extension, String groupName, int receptionId) {
-  XmlElement head = new XmlElement('extension')
+  XmlElement extensionNode = new XmlElement('extension')
     ..attributes['name'] = receptionExtensionName(receptionId, extension.name);
 
   //Check if the destination_number is right
   XmlElement destCond = XmlCondition('destination_number', receptionExtensionName(receptionId, groupName));
-  head.children.add(destCond);
+  extensionNode.children.add(destCond);
 
   //Makes the conditions
   XmlElement lastCondition = destCond;
   for(Condition condition in extension.conditions) {
-    XmlElement xmlNode = conditionToXml(condition);
-    //The conditions must be nested.
-    lastCondition.children.add(xmlNode);
-    lastCondition = xmlNode;
+    XmlElement conditionNode = conditionToXml(condition);
+    //The conditions must be nested, otherwise the Freeswitch stops look after it
+    // have found it's a condition which criteria is meet.
+    lastCondition.children.add(conditionNode);
+    lastCondition = conditionNode;
   }
 
   //Makes all the actions
@@ -74,7 +79,7 @@ XmlElement _makeReceptionExtensions(Extension extension, String groupName, int r
     lastCondition.children.addAll(xmlActions.reduce(union));
   }
 
-  return head;
+  return extensionNode;
 }
 
 /**
@@ -102,7 +107,7 @@ XmlElement _makeEntryNode(Dialplan dialplan, Iterable<String> conditionExtension
   return entry;
 }
 
-//TODO REMOVE - LIBRARY THIS.
+/**Makes a simple transfer node.*/
 XmlElement _FsXmlTransfer(String extension, String context, {bool anti_action: false}) {
   return XmlAction('transfer', '${extension} xml ${context}', anti_action);
 }

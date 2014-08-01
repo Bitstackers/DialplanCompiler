@@ -45,6 +45,7 @@ class DialplanController {
     File publicFile = new File(publicFilePath);
 
     //The XmlPackage v1.0.0 is deprecated, and it uses carrage-return instead of newlines, for line breaks.
+    // But the newer version is a completer rewrite, which mean that it require some work, to switch.
     String publicContent = output.entry.toString().replaceAll('\r', '\n');
     publicFile.writeAsStringSync(publicContent, mode: FileMode.WRITE, flush:true);
 

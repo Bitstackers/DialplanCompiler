@@ -9,8 +9,6 @@ import 'package:xml/xml.dart';
 import 'package:OpenReceptionFramework/httpserver.dart';
 import 'logger.dart';
 
-final ContentType JSON_MIME_TYPE = new ContentType('application', 'json', charset: 'UTF-8');
-
 /**
  * Makes a condition xml element
  */
@@ -26,16 +24,6 @@ XmlElement XmlAction(String application, String data, [bool anti_action = false]
     new XmlElement(anti_action ? 'anti-action' : 'action')
     ..attributes['application'] = application
     ..attributes['data'] = data;
-
-/**
- * Applies CORS headers to the [response].
- */
-void addCorsHeaders(HttpResponse response) {
-  response.headers
-    ..add("Access-Control-Allow-Origin", "*")
-    ..add("Access-Control-Allow-Methods", "POST, GET, PUT, DELETE, OPTIONS")
-    ..add("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-}
 
 /**
  * Creates a new Http Server that listens for IPv4 requests.

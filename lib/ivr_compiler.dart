@@ -7,6 +7,7 @@ import 'package:libdialplan/ivr.dart';
 import 'dialplan_compiler.dart';
 
 XmlElement generateIvrXml(IvrList list, int receptionId) {
+  //Every include file must have a root element <include>
   XmlElement root = new XmlElement('include');
 
   root.children.addAll(list.list.map((Ivr ivr) => _generateMenu(ivr, receptionId)));
@@ -62,12 +63,12 @@ XmlElement _generateMenu(Ivr ivr, int receptionId) {
     menu.attributes['timeout'] = ivr.timeout.toString();
   }
 
-  menu.children.addAll(ivr.entries.map((e) => _makeEntry(e, receptionId)));
+  menu.children.addAll(ivr.entries.map((Entry entry) => _makeEntryNode(entry, receptionId)));
 
   return menu;
 }
 
-XmlElement _makeEntry(Entry entry, int receptionId) {
+XmlElement _makeEntryNode(Entry entry, int receptionId) {
   XmlElement node = new XmlElement('entry');
 
   node.attributes['action'] = 'menu-exec-app';
