@@ -6,7 +6,7 @@ import 'dart:io';
 
 import 'package:xml/xml.dart';
 
-import 'package:OpenReceptionFramework/httpserver.dart';
+import 'package:openreception_framework/httpserver.dart';
 import 'logger.dart';
 
 /**

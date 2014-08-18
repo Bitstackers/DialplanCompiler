@@ -9,7 +9,7 @@ import 'package:libdialplan/ivr.dart';
 import 'package:route/pattern.dart';
 import 'package:path/path.dart' as path;
 import 'package:route/server.dart';
-import 'package:OpenReceptionFramework/httpserver.dart';
+import 'package:openreception_framework/httpserver.dart';
 
 import 'configuration.dart';
 import 'dialplan_compiler.dart';
