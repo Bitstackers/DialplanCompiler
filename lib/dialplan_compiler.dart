@@ -43,7 +43,8 @@ XmlElement _makeReceptionContext(Dialplan dialplan) {
     List<Extension> extensionList = group.extensions;
     extensions.addAll(extensionList.map((Extension ext) => _makeReceptionExtensions(ext, group.name, dialplan.receptionId)));
 
-    if(extensionList.any((Extension ext) => ext.conditions.isEmpty)) {
+    //In case the creater have not catched a case, and havn't made a extension herself to catch everything.
+    if(!extensionList.any((Extension ext) => ext.conditions.isEmpty)) {
       //TODO make a "I as a creater of this dialplan may just have fucked up, and please catch the call so Freeswitch don't hangup on it" extension
     }
   }
