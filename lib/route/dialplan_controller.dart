@@ -2,8 +2,9 @@ part of XmlDialplanGenerator.router;
 
 class DialplanController {
   Configuration config;
+  Logger logger;
 
-  DialplanController(Configuration this.config);
+  DialplanController(Configuration this.config, Logger this.logger);
 
   void deployCompiler(HttpRequest request) {
       int receptionId = pathIntParameter(request.uri, 'reception');
@@ -12,7 +13,8 @@ class DialplanController {
         Dialplan dialplan;
         try {
           json = JSON.decode(content);
-        } catch(error) {
+        } catch(error, stack) {
+          logger.error('Error: ${error} stack: ${stack}');
           clientError(request, "Malformed Json format");
           return;
         }
@@ -20,20 +22,23 @@ class DialplanController {
         try {
           dialplan = new Dialplan.fromJson(json)
             ..receptionId = receptionId;
-        } catch(error) {
+        } catch(error, stack) {
+          logger.error('Error: ${error} stack: ${stack}');
           clientError(request, "Malformed Dialplan format");
           return;
         }
 
         try {
           _compileDialplan(dialplan);
-        } catch(error) {
+        } catch(error, stack) {
+          logger.error('Error: ${error} stack: ${stack}');
           clientError(request, "Compiler error. ${error}");
           return;
         }
 
         allOk(request);
       }).catchError((error, stack) {
+        logger.error('Error: ${error} stack: ${stack}');
         InternalServerError(request, error: error, stack: stack);
       });
     }

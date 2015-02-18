@@ -46,7 +46,7 @@ void setupRoutes(HttpServer server, Configuration config, Logger logger) {
     ..defaultStream.listen(page404);
 }
 
-void setupControllers(Configuration config) {
-  dialplanController = new DialplanController(config);
+void setupControllers(Configuration config, Logger logger) {
+  dialplanController = new DialplanController(config, logger);
   freeswitchController = new FreeswitchController(config);
 }

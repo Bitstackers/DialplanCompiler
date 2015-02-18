@@ -13,7 +13,7 @@ void main(List<String> args) {
   ArgResults parsedArgs = registerAndParseCommandlineArguments(parser, args);
 
   if(parsedArgs['help']) {
-    print(parser.getUsage());
+    print(parser.usage);
     return;
   }
 
@@ -21,7 +21,7 @@ void main(List<String> args) {
   config.parse();
   print(config);
 
-  setupControllers(config);
+  setupControllers(config, logger);
 
   makeServer(config.httpport)
     .then((HttpServer server) {
